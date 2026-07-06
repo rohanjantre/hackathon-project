@@ -32,12 +32,12 @@ api.interceptors.request.use(
  */
 export const authService = {
   login: async (payload: LoginPayload): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>('/auth/login', payload);
+    const response = await api.post<AuthResponse>('/user/login', payload);
     return response.data;
   },
 
   signup: async (payload: SignupPayload): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>('/auth/signup', payload);
+    const response = await api.post<AuthResponse>('/user/signup', payload);
     return response.data;
   },
 };

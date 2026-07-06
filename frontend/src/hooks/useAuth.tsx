@@ -33,12 +33,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const response = await authService.login(payload);
-      
-      const authToken = response.access_token || response.token || 'mock_jwt_token_forgemind';
-      const userData: User = response.user || {
-        name: payload.email.split('@')[0],
-        email: payload.email,
-      };
+
+      const authToken = response.token;
+      const userData = response.user;
 
       setToken(authToken);
       setUser(userData);
@@ -63,12 +60,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const response = await authService.signup(payload);
-      
-      const authToken = response.access_token || response.token || 'mock_jwt_token_forgemind';
-      const userData: User = response.user || {
-        name: payload.name,
-        email: payload.email,
-      };
+
+      const authToken = response.token;
+      const userData = response.user;
 
       setToken(authToken);
       setUser(userData);

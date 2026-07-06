@@ -5,21 +5,20 @@ export interface User {
 }
 
 export interface AuthResponse {
-  access_token?: string;
-  token?: string;
-  user?: User;
-  message?: string;
+  message: string;
+  token: string;
+  user: User;
 }
 
 export interface LoginPayload {
   email: string;
-  password?: string;
+  password: string;
 }
 
 export interface SignupPayload {
   name: string;
   email: string;
-  password?: string;
+  password: string;
 }
 
 export interface AuthContextType {
