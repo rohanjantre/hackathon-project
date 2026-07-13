@@ -36,12 +36,14 @@ export class UserService {
         const newUser = await this.userModel.create({
             name: dto.name,
             email: dto.email,
-            password: hashedPassword
+            password: hashedPassword,
+            role: "USER",
         });
 
         const token = this.jwtService.sign({
-            id: newUser._id,
-            email: newUser.email,
+            id: user!._id,
+            email: user!.email,
+            role: user!.role,
         });
 
         return {
@@ -80,13 +82,23 @@ export class UserService {
         });
 
         return {
+
             message: "Login Successful",
+
             token,
+
             user: {
+
                 _id: user._id,
+
                 name: user.name,
+
                 email: user.email,
-            },
-        };
+
+                role: user.role
+
+            }
+
+        }
     }
 }
