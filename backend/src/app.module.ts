@@ -3,13 +3,17 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AdminModule } from './admin/admin.module';
+import { KnowledgeModule } from './knowledge/knowledge.module';
 
 @Module({
   imports: [
     MongooseModule.forRoot(
       'mongodb://127.0.0.1:27017/nestAuth',
     ),
-    UserModule
+    UserModule,
+    AdminModule,
+    KnowledgeModule
   ],
   controllers: [AppController],
   providers: [AppService],
