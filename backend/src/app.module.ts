@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AdminModule } from './admin/admin.module';
 import { KnowledgeModule } from './knowledge/knowledge.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { KnowledgeModule } from './knowledge/knowledge.module';
     ),
     UserModule,
     AdminModule,
-    KnowledgeModule
+    KnowledgeModule,
+    CategoryModule
   ],
   controllers: [AppController],
   providers: [AppService],
