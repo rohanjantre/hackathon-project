@@ -42,6 +42,11 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center gap-3 sm:gap-4">
           {isAuthenticated ? (
             <div className="flex items-center gap-3 sm:gap-4">
+              <Link to="/decision">
+                <Button className="font-semibold shadow-glow bg-blue-600 hover:bg-blue-500 text-white">
+                  Open Command Center
+                </Button>
+              </Link>
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs text-slate-300">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 <UserIcon className="w-3.5 h-3.5 text-blue-400" />
@@ -54,7 +59,7 @@ export const Navbar: React.FC = () => {
                   logout();
                   navigate('/');
                 }}
-                className="gap-1.5 text-red-400 border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40 hover:text-red-300"
+                className="gap-1.5 text-slate-300 border-slate-700/60 hover:bg-slate-800 hover:text-white"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span className="hidden xs:inline">Sign Out</span>
@@ -72,7 +77,7 @@ export const Navbar: React.FC = () => {
               {location.pathname !== '/signup' && (
                 <Link to="/signup">
                   <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                    <Button variant="default" size="sm" className="font-semibold shadow-glow">
+                    <Button variant="default" size="sm" className="font-semibold shadow-glow bg-blue-600 hover:bg-blue-500 text-white">
                       Get Started
                     </Button>
                   </motion.div>

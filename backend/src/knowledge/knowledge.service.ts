@@ -1,167 +1,74 @@
-import {
-    BadRequestException,
-    Injectable,
-    NotFoundException,
-} from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
-
-import {
-    Knowledge,
-    KnowledgeDocument,
-} from "./schemas/knowledge.schema";
-
-import { CreateKnowledgeDto } from "./dto/create-knowledge.dto";
-import { UpdateKnowledgeDto } from "./dto/update-knowledge.dto";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { KnowledgeRepository } from './knowledge.repository';
+import { DocumentProcessorService } from './services/ai-pipeline.service';
 
 @Injectable()
 export class KnowledgeService {
-    constructor(
-        @InjectModel(Knowledge.name)
-        private readonly knowledgeModel: Model<KnowledgeDocument>,
-    ) { }
+  constructor(
+    private readonly repository: KnowledgeRepository,
+    private readonly processor: DocumentProcessorService,
+  ) {}
 
-    // Create Knowledge
-    async create(
-        dto: CreateKnowledgeDto,
-        createdBy: string,
-    ) {
-        const knowledge = await this.knowledgeModel.create({
-            ...dto,
-            createdBy,
-            updatedBy: createdBy,
-        });
+  async uploadDocument(file: Express.Multer.File, body: any, userId: string) {
+    const docData = {
+      title: body.title || file.originalname,
+      originalFileName: file.originalname,
+      storedFileName: file.filename,
+      description: body.description,
+      category: body.category || 'Other',
+      department: body.department,
+      assetId: body.assetId,
+      uploadedBy: userId,
+      mimeType: file.mimetype,
+      extension: file.originalname.split('.').pop() || '',
+      size: file.size,
+      storagePath: file.path,
+      status: 'Uploaded',
+      processingStage: 'Initialized',
+      aiReady: false,
+    };
 
-        return {
-            message: "Knowledge created successfully",
-            data: knowledge,
-        };
-    }
+    const doc = await this.repository.create(docData);
+    
+    // Trigger async pipeline
+    this.processor.runPipeline(doc._id.toString());
 
-    // Get All Knowledge
-    async findAll() {
-        const knowledge = await this.knowledgeModel
-            .find()
-            .populate("createdBy", "name email")
-            .populate("updatedBy", "name email")
-            .sort({ createdAt: -1 });
+    return doc;
+  }
 
-        return {
-            count: knowledge.length,
-            data: knowledge,
-        };
-    }
+  async getDocuments(query: any) {
+    return this.repository.findAll(query);
+  }
 
-    // Get Knowledge By Id
-    async findOne(id: string) {
-        if (!Types.ObjectId.isValid(id)) {
-            throw new BadRequestException(
-                "Invalid Knowledge ID",
-            );
-        }
+  async getDocumentById(id: string) {
+    const doc = await this.repository.findById(id);
+    if (!doc) throw new NotFoundException('Document not found');
+    return doc;
+  }
 
-        const knowledge = await this.knowledgeModel
-            .findById(id)
-            .populate("createdBy", "name email")
-            .populate("updatedBy", "name email");
+  async updateDocument(id: string, updateData: any) {
+    const doc = await this.repository.update(id, updateData);
+    if (!doc) throw new NotFoundException('Document not found');
+    return doc;
+  }
 
-        if (!knowledge) {
-            throw new NotFoundException(
-                "Knowledge not found",
-            );
-        }
+  async deleteDocument(id: string) {
+    const doc = await this.repository.delete(id);
+    if (!doc) throw new NotFoundException('Document not found');
+    return doc;
+  }
 
-        return knowledge;
-    }
+  async getDashboardStats() {
+    return this.repository.getStats();
+  }
 
-    // Update Knowledge
-    async update(
-        id: string,
-        dto: UpdateKnowledgeDto,
-        updatedBy: string,
-    ) {
-        if (!Types.ObjectId.isValid(id)) {
-            throw new BadRequestException(
-                "Invalid Knowledge ID",
-            );
-        }
-
-        const knowledge =
-            await this.knowledgeModel.findByIdAndUpdate(
-                id,
-                {
-                    ...dto,
-                    updatedBy,
-                },
-                {
-                    new: true,
-                },
-            );
-
-        if (!knowledge) {
-            throw new NotFoundException(
-                "Knowledge not found",
-            );
-        }
-
-        return {
-            message: "Knowledge updated successfully",
-            data: knowledge,
-        };
-    }
-
-    // Delete Knowledge
-    async remove(id: string) {
-        if (!Types.ObjectId.isValid(id)) {
-            throw new BadRequestException(
-                "Invalid Knowledge ID",
-            );
-        }
-
-        const knowledge =
-            await this.knowledgeModel.findByIdAndDelete(id);
-
-        if (!knowledge) {
-            throw new NotFoundException(
-                "Knowledge not found",
-            );
-        }
-
-        return {
-            message: "Knowledge deleted successfully",
-        };
-    }
-
-    // Search Knowledge (Useful for AI later)
-    async search(keyword: string) {
-        const knowledge = await this.knowledgeModel.find({
-            $or: [
-                {
-                    title: {
-                        $regex: keyword,
-                        $options: "i",
-                    },
-                },
-                {
-                    content: {
-                        $regex: keyword,
-                        $options: "i",
-                    },
-                },
-                {
-                    tags: {
-                        $elemMatch: {
-                            $regex: keyword,
-                            $options: "i",
-                        },
-                    },
-                },
-            ],
-        });
-
-        return {
-            count: knowledge.length,
-            data: knowledge,
-        };
-    }
+  async searchDocuments(queryStr: string) {
+    return this.repository.findAll({
+      $or: [
+        { title: { $regex: queryStr, $options: 'i' } },
+        { description: { $regex: queryStr, $options: 'i' } },
+        { 'entities.keywords': { $regex: queryStr, $options: 'i' } }
+      ]
+    });
+  }
 }

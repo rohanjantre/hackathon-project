@@ -5,7 +5,15 @@ import { UserModule } from './user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AdminModule } from './admin/admin.module';
 import { KnowledgeModule } from './knowledge/knowledge.module';
-import { CategoryModule } from './category/category.module';
+import { AssetsModule } from './assets/assets.module';
+import { CopilotModule } from './copilot/copilot.module';
+import { GraphModule } from './graph/graph.module';
+import { ComplianceModule } from './compliance/compliance.module';
+import { PredictiveModule } from './predictive/predictive.module';
+import { WorkflowModule } from './workflow/workflow.module';
+import { PlatformModule } from './platform/platform.module';
+import { AnalyticsModule } from './analytics/analytics.module';
+import { DecisionCenterModule } from './decision-center/decision-center.module';
 
 @Module({
   imports: [
@@ -15,7 +23,15 @@ import { CategoryModule } from './category/category.module';
     UserModule,
     AdminModule,
     KnowledgeModule,
-    CategoryModule
+    AssetsModule,
+    CopilotModule,
+    GraphModule,
+    ComplianceModule,
+    PredictiveModule,
+    WorkflowModule,
+    PlatformModule,
+    AnalyticsModule,
+    DecisionCenterModule
   ],
   controllers: [AppController],
   providers: [AppService],

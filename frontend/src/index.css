@@ -102,3 +102,20 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
+
+/* Light Mode Global Filter Hack */
+html.light {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Reverse the filter for images and videos so they look normal */
+html.light img, 
+html.light video,
+html.light .recharts-surface {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Fix background color in light mode to avoid double inversion issues */
+html.light body {
+  background-color: #0F172A;
+}
