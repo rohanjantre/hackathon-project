@@ -24,4 +24,4 @@ import { DocumentProcessorService, OCRService, EntityExtractionService, Embeddin
     SummaryService,
   ],
 })
-export class KnowledgeModule {}
+export class KnowledgeModule { }
