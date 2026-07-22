@@ -108,7 +108,7 @@ export const Signup: React.FC = () => {
       // Show animated success state as requested
       setIsSuccessState(true);
       setTimeout(() => {
-        navigate('/');
+        navigate('/decision');
       }, 2000);
     } catch (err) {
       // Error toast is handled in useAuth signup method

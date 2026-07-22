@@ -56,7 +56,7 @@ export const Login: React.FC = () => {
         password: data.password,
       });
       // On success, redirect to home or dashboard
-      navigate('/');
+      navigate('/decision');
     } catch (err) {
       // Error toast is handled automatically inside useAuth login method
     }
